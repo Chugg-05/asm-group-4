@@ -43,7 +43,7 @@ public class AssetController {
     }
 
     @PostMapping("/update/{id}")
-    public String udpate(@ModelAttribute("asset") Asset asset, Model model) {
+    public String update(@ModelAttribute("asset") Asset asset) {
         assetRepository.save(asset);
         return "redirect:/asset/field";
     }
