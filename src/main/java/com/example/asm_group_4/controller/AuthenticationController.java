@@ -39,7 +39,10 @@ public class AuthenticationController {
         }
     }
 
-
+    @GetMapping("/sign-in")
+    public String signInPage() {
+        return "/pages/signIn";
+    }
 
     @PostMapping("/create-account")
     public String createAccount(Account account) {
