@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
+    AccountRepository accountRepository;
     AuthenticationService service;
     @GetMapping("/login")
     public String loginPage() {
