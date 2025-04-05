@@ -15,46 +15,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
     AccountRepository accountRepository;
     AuthenticationService service;
-    @GetMapping("/login")
+    @GetMapping("/auth/login")
     public String loginPage() {
         return "/pages/login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public String login(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
         Account account = service.validAccount(username, password);
 
         if (account != null) {
             session.setAttribute("account", account);
-            return "redirect:/asset/field";
+            return "redirect:/auth/home";
         } else {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu");
             return "/pages/login";
         }
     }
 
-    @GetMapping("/sign-in")
+    @GetMapping("/auth/sign-in")
     public String signInPage() {
         return "/pages/signIn";
     }
 
-    @PostMapping("/create-account")
+    @PostMapping("/auth/create-account")
     public String createAccount(Account account) {
         accountRepository.save(account);
         return "redirect:/auth/login";
     }
 
 
-    @GetMapping("/logout")
+    @GetMapping("/auth/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/auth/login";
+    }
+    @GetMapping("/auth/home")
+    public String showHomePage() {
+        return "pages/home.html";
     }
 
 }
