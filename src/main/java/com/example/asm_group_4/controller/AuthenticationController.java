@@ -39,6 +39,18 @@ public class AuthenticationController {
         }
     }
 
+    @GetMapping("/sign-in")
+    public String signInPage() {
+        return "/pages/signIn";
+    }
+
+    @PostMapping("/create-account")
+    public String createAccount(Account account) {
+        accountRepository.save(account);
+        return "redirect:/auth/login";
+    }
+
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
