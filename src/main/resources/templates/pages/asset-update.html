@@ -9,25 +9,29 @@
 </head>
 <body>
 <div class="container">
-  <h1 class="text-center my-3">Thông Tin Tài sản</h1>
-  <form action="/#" method="post" th:object="${asset}">
+  <h1 class="text-center my-3">Cập nhật thông tin tài sản</h1>
+  <form th:action="@{/asset/update/{id}(id=${asset.id})}" method="post" th:object="${asset}">
     <input type="hidden" class="form-control" id="id" name="id" th:field="*{id}">
     <div class="form-floating mb-3">
-      <input type="text" class="form-control" id="tenTaiSan" name="name" th:field="*{name}" readonly>
+      <input type="text" class="form-control" id="tenTaiSan" name="name" th:field="*{name}">
       <label for="tenTaiSan">Tên tài sản</label>
+      <small class="text-danger" th:errors="*{name}"></small>
     </div>
     <div class="form-floating mb-3">
-      <input type="number" class="form-control" id="giaTien" name="price" step="any" th:field="*{price}" readonly>
+      <input type="number" class="form-control" id="giaTien" name="price" step="any" th:field="*{price}">
       <label for="giaTien">Giá tiền</label>
+      <small class="text-danger" th:errors="*{price}"></small>
     </div>
     <div class="form-floating mb-3">
-      <input type="number" class="form-control" id="soLuong" name="quantity" th:field="*{quantity}" readonly>
+      <input type="number" class="form-control" id="soLuong" name="quantity" th:field="*{quantity}">
       <label for="soLuong">Số lượng</label>
+      <small class="text-danger" th:errors="*{quantity}"></small>
     </div>
     <div class="form-floating mb-3">
-      <input type="text" class="form-control" id="ghiChu" name="note" th:field="*{note}" readonly>
+      <input type="text" class="form-control" id="ghiChu" name="note" th:field="*{note}">
       <label for="ghiChu">Ghi chú</label>
     </div>
+    <button type="submit" class="btn btn-warning" onclick="return confirm('Bạn có chắc chắn muốn xóa cập nhật thông tin tài sản này không?');">Update</button>
   </form>
 </div>
 </body>

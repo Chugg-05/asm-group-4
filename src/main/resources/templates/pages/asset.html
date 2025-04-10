@@ -12,64 +12,30 @@
 </head>
 <body>
   <div class="container">
-      <h1 class="text-center my-3">Tài sản</h1>
-        <form action="/asset/add" method="post">
+      <h1 class="text-center my-3">Thêm tài sản</h1>
+        <form action="/asset/add" method="post"  th:object="${asset}">
             <input type="hidden" class="form-control" id="id" name="id">
           <div class="form-floating mb-3">
               <input type="text" class="form-control" id="tenTaiSan" name="name">
               <label for="tenTaiSan">Tên tài sản</label>
+              <small class="text-danger" th:errors="*{name}"></small>
           </div>
           <div class="form-floating mb-3">
               <input type="number" class="form-control" id="giaTien" name="price" step="any">
               <label for="giaTien">Giá tiền</label>
+              <small class="text-danger" th:errors="*{price}"></small>
           </div>
           <div class="form-floating mb-3">
               <input type="number" class="form-control" id="soLuong" name="quantity">
               <label for="soLuong">Số lượng</label>
+              <small class="text-danger" th:errors="*{quantity}"></small>
           </div>
           <div class="form-floating mb-3">
               <input type="text" class="form-control" id="ghiChu" name="note">
               <label for="ghiChu">Ghi chú</label>
           </div>
-            <button type="submit" class="btn btn-primary">Add</button>
+            <button type="submit" class="btn btn-primary" onclick="return confirm('Bạn có chắc chắn muốn thêm tài sản này không?');">Add</button>
       </form>
-
-      <div class="d-flex justify-content-between my-3">
-          <div class="search-bar w-25">
-              <form class="input-group" action="/asset/search" method="get">
-                  <input type="text" class="form-control" name="keyword" placeholder="Search..." aria-label="Tìm kiếm">
-                  <button class="btn btn-primary" type="submit" id="search-addon">
-                      <i class="fas fa-search"></i>
-                  </button>
-              </form>
-          </div>
-          <a th:href="@{/asset/field}" class="btn btn-outline-info rounded-5"><i class="fa-solid fa-arrows-rotate"></i></a>
-      </div>
-      <table class="table table-hover">
-          <thead>
-            <tr>
-                <th>STT</th>
-                <th>Tên tài sản</th>
-                <th>Giá tiền (vnđ)</th>
-                <th>Số lượng</th>
-                <th>Ghi chú</th>
-                <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="asset, stt : ${listA}">
-                <td th:text="${stt.index + 1}"></td>
-                <td th:text="${asset.name}"></td>
-                <td th:text="${asset.price}"></td>
-                <td th:text="${asset.quantity}"></td>
-                <td th:text="${asset.note}"></td>
-                <td>
-                    <a th:href="@{/asset/detail/{id}(id=${asset.id})}" class="btn btn-info">Detail</a>
-                    <a th:href="@{/asset/delete/{id}(id=${asset.id})}" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-          </tbody>
-      </table>
   </div>
 </body>
 </html>
