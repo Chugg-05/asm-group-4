@@ -2,12 +2,14 @@ package com.example.asm_group_4.controller;
 
 import com.example.asm_group_4.model.Staff;
 import com.example.asm_group_4.repository.StaffRepository;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -17,47 +19,99 @@ import java.util.Date;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StaffController {
+
     StaffRepository staffRepository;
 
-    @GetMapping("/field")
-    public String FieldStaff(Model model){
-        model.addAttribute("listStaff",staffRepository.findAll(Sort.by(Sort.Direction.DESC,"id")));
-        return "pages/staff.html";
+    // 1. Danh sách nhân viên có phân trang
+    @GetMapping("/list")
+    public String listStaff(Model model, @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Staff> staffPage = staffRepository.findAll(pageable);
+
+        model.addAttribute("listStaff", staffPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", staffPage.getTotalPages());
+
+        return "pages/staff-list.html";
     }
 
+    // 2. Hiển thị form thêm
+    @GetMapping("/add-form")
+    public String showAddForm(Model model) {
+        model.addAttribute("staff", new Staff());
+        return "pages/staff-add";
+    }
+
+    // 3. Xử lý thêm nhân viên
     @PostMapping("/add")
-    public String AddStaff(Staff staff){
+    public String addStaff(@Valid @ModelAttribute("staff") Staff staff,
+                           BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "pages/staff-add";
+        }
+
         staff.setStartDate(new Date());
         staff.setEndDate(new Date());
         staffRepository.save(staff);
-        return "redirect:/staff/field";
+        return "redirect:/staff/list";
     }
 
+    // 4. Xem chi tiết nhân viên
     @GetMapping("/detail/{id}")
-    public String DetailStaff(@PathVariable("id") Integer id, Model model){
-        Staff staff = staffRepository.findById(id).get();
-        model.addAttribute("staff",staff);
+    public String detailStaff(@PathVariable("id") Integer id, Model model) {
+        Staff staff = staffRepository.findById(id).orElse(null);
+        model.addAttribute("staff", staff);
         return "pages/staff-detail.html";
     }
 
+    // 5. Hiển thị form cập nhật
+    @GetMapping("/update-form/{id}")
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
+        Staff staff = staffRepository.findById(id).orElse(null);
+        model.addAttribute("staff", staff);
+        return "pages/staff-update";
+    }
+
+    // 6. Xử lý cập nhật nhân viên
     @PostMapping("/update/{id}")
-    public String UpdateStaff(Staff staff){
-        staff.setEndDate(new Date());
-        staffRepository.save(staff);
-        return "redirect:/staff/field";
+    public String updateStaff(@PathVariable("id") Integer id,
+                              @Valid @ModelAttribute("staff") Staff staffUpdate,
+                              BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "pages/staff-update";
+        }
+
+        Staff existingStaff = staffRepository.findById(id).orElse(null);
+        if (existingStaff != null) {
+            existingStaff.setEmployeeCode(staffUpdate.getEmployeeCode());
+            existingStaff.setFullName(staffUpdate.getFullName());
+            existingStaff.setDayOfBirth(staffUpdate.getDayOfBirth());
+            existingStaff.setGender(staffUpdate.getGender());
+            existingStaff.setPhoneNumber(staffUpdate.getPhoneNumber());
+            existingStaff.setIdCard(staffUpdate.getIdCard());
+            existingStaff.setStartDate(staffUpdate.getStartDate());
+            existingStaff.setEndDate(new Date());
+            existingStaff.setDuration(staffUpdate.getDuration());
+            existingStaff.setStatus(staffUpdate.getStatus());
+
+            staffRepository.save(existingStaff);
+        }
+        return "redirect:/staff/list";
     }
 
+    // 7. Xóa nhân viên
     @GetMapping("/delete/{id}")
-    public String Delete(@PathVariable("id") Integer id){
+    public String delete(@PathVariable("id") Integer id) {
         staffRepository.deleteById(id);
-        return "redirect:/staff/field";
+        return "redirect:/staff/list";
     }
 
+    // 8. Tìm kiếm nhân viên
     @GetMapping("/search")
     public String search(@RequestParam("keyword") String keyword, Model model) {
         keyword = keyword.trim();
         model.addAttribute("listStaff", staffRepository.searchStaff(keyword));
         model.addAttribute("keyword", keyword);
-        return "/pages/staff.html";
+        return "pages/staff-list.html";
     }
 }
