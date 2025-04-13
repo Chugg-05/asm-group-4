@@ -49,7 +49,6 @@ public class StaffController {
         if (result.hasErrors()) {
             return "pages/staff-add";
         }
-
         staff.setStartDate(new Date());
         staff.setEndDate(new Date());
         staffRepository.save(staff);
@@ -68,6 +67,8 @@ public class StaffController {
     @GetMapping("/update-form/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
         Staff staff = staffRepository.findById(id).orElse(null);
+        staff.setStartDate(new Date());
+        staff.setEndDate(new Date());
         model.addAttribute("staff", staff);
         return "pages/staff-update";
     }
@@ -89,7 +90,7 @@ public class StaffController {
             existingStaff.setGender(staffUpdate.getGender());
             existingStaff.setPhoneNumber(staffUpdate.getPhoneNumber());
             existingStaff.setIdCard(staffUpdate.getIdCard());
-            existingStaff.setStartDate(staffUpdate.getStartDate());
+            existingStaff.setStartDate(new Date());
             existingStaff.setEndDate(new Date());
             existingStaff.setDuration(staffUpdate.getDuration());
             existingStaff.setStatus(staffUpdate.getStatus());
