@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -27,8 +28,8 @@ public class AuthenticationController {
 
     @PostMapping("/auth/login")
     public String login(@Valid @ModelAttribute("account") Account account,
-                        BindingResult result, Model model, HttpSession session) {
-        if (result.hasErrors()) {
+                        Errors errors, Model model, HttpSession session) {
+        if (errors.hasErrors()) {
             return "/pages/login";
         }
         Account existing = accountRepository.findByUsernameAndPassword(
@@ -50,8 +51,8 @@ public class AuthenticationController {
 
     @PostMapping("/auth/create-account")
     public String createAccount(@Valid @ModelAttribute("account") Account account,
-                                BindingResult result, Model model) {
-        if (result.hasErrors()) {
+                                Errors errors, Model model) {
+        if (errors.hasErrors()) {
             return "/pages/signIn";
         }
         accountRepository.save(account);
