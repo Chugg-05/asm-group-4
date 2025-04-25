@@ -57,20 +57,34 @@
     </tr>
     </tbody>
   </table>
-  <div class="d-flex justify-content-center mt-3">
-    <ul class="pagination">
+  <nav th:if="${totalPages > 1}" aria-label="Page navigation">
+    <ul class="pagination justify-content-center mt-4">
       <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-        <a class="page-link" th:href="@{/asset/list(page=${currentPage - 1})}"><i class="fa-solid fa-backward"></i></a>
+        <a class="page-link" th:href="@{/asset/list(page=${currentPage - 1})}">Trước</a>
       </li>
+
       <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
           th:classappend="${i == currentPage} ? 'active'">
-        <a class="page-link" th:href="@{/asset/list(page=${i})}" th:text="${i + 1}"></a>
+        <a class="page-link" th:href="@{/asset/list(page=${i})}" th:text="${i + 1}">1</a>
       </li>
-      <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-        <a class="page-link" th:href="@{/asset/list(page=${currentPage + 1})}"><i class="fa-solid fa-forward"></i></a>
+
+      <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+        <a class="page-link" th:href="@{/asset/list(page=${currentPage + 1})}">Sau</a>
       </li>
     </ul>
-  </div>
+  </nav>
+
+  <!-- Script kiểm tra ô tìm kiếm -->
+  <script>
+    function checkSearch() {
+      const keyword = document.getElementById("keywordInput").value.trim();
+      if (keyword === "") {
+        alert("Vui lòng nhập từ khóa tìm kiếm!");
+        return false;
+      }
+      return true;
+    }
+  </script>
 
 </div>
 </body>
